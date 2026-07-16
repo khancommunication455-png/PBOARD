@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -41,6 +42,7 @@ import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -85,6 +87,7 @@ import org.florisboard.lib.android.showShortToastSync
  * The "live keyboard mode" toggle lives on the Appearance screen because it
  * affects the keyboard renderer; this screen only manages the preset library.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PresetsScreen() {
     val context = LocalContext.current
@@ -173,7 +176,7 @@ fun PresetsScreen() {
                         Button(onClick = {
                             val clipboard = context.getSystemService(android.content.ClipboardManager::class.java)
                             clipboard?.setPrimaryClip(android.content.ClipData.newPlainText("style", convertedText))
-                            showShortToastSync(context, "Copied")
+                            context.showShortToastSync("Copied")
                         }) { Icon(Icons.Default.ContentCopy, null); Spacer(Modifier.width(4.dp)); Text("Copy") }
                         Button(onClick = {
                             val intent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {

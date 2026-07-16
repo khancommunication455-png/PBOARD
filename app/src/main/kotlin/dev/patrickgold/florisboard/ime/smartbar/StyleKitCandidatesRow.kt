@@ -22,6 +22,7 @@ import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,7 +35,9 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import dev.patrickgold.florisboard.app.FlorisPreferenceStore
 import dev.patrickgold.florisboard.ime.nlp.SuggestionCandidate
 import dev.patrickgold.florisboard.ime.theme.FlorisImeUi
@@ -47,7 +50,6 @@ import org.florisboard.lib.snygg.SnyggSelector
 import org.florisboard.lib.snygg.ui.SnyggColumn
 import org.florisboard.lib.snygg.ui.SnyggRow
 import org.florisboard.lib.snygg.ui.SnyggSpacer
-import org.florisboard.lib.snygg.ui.SnyggText
 
 /**
  * StyleKit Part 1: a 3-chip suggestion row that visually emphasizes the **center**
@@ -178,20 +180,23 @@ private fun StyleKitCandidateChip(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            SnyggText(
-                elementName = "$elementName-text",
-                attributes = attributes,
-                selector = selector,
+            // Use plain Text for the main label so we can apply FontWeight
+            // directly. SnyggText doesn't expose fontWeight as a parameter
+            // (it comes from the Snygg stylesheet); for the emphasized center
+            // chip we want to override that, so we use Text here. The Snygg
+            // element name is still applied via the parent SnyggRow/SnyggColumn.
+            Text(
                 text = candidate.text.toString(),
                 fontWeight = if (isEmphasized) FontWeight.Bold else FontWeight.Normal,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
             if (candidate.secondaryText != null) {
-                SnyggText(
-                    elementName = "$elementName-secondary-text",
-                    attributes = attributes,
-                    selector = selector,
+                Text(
                     text = candidate.secondaryText!!.toString(),
-                    fontSize = 12.dp,
+                    fontSize = 12.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                 )
             }
         }

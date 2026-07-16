@@ -90,9 +90,11 @@ class AdaptiveLearningProvider(context: Context) : SuggestionProvider {
         // Database is opened lazily on first use; nothing to do here.
     }
 
-    override suspend fun preload(subtype: Subtype) = withContext(Dispatchers.IO) {
+    override suspend fun preload(subtype: Subtype) {
         // Trigger DB open so the first keystroke isn't slow.
-        tryOrNull { StyleKitDatabase.get(appContext).openHelper.writableDatabase }
+        withContext(Dispatchers.IO) {
+            tryOrNull { StyleKitDatabase.get(appContext).openHelper.writableDatabase }
+        }
     }
 
     override suspend fun suggest(
@@ -247,7 +249,7 @@ class AdaptiveLearningProvider(context: Context) : SuggestionProvider {
             for (t in trigrams) {
                 add(WordSuggestionCandidate(
                     text = t.thirdWord,
-                    confidence = (t.frequency * TRIGRAM_WEIGHT / 100f).coerceIn(0.0, 1.0),
+                    confidence = (t.frequency.toDouble() * TRIGRAM_WEIGHT / 100.0).coerceIn(0.0, 1.0),
                     isEligibleForAutoCommit = false,
                     isEligibleForUserRemoval = true,
                     sourceProvider = this@AdaptiveLearningProvider,
@@ -257,7 +259,7 @@ class AdaptiveLearningProvider(context: Context) : SuggestionProvider {
                 if (none { it.text.toString() == b.secondWord }) {
                     add(WordSuggestionCandidate(
                         text = b.secondWord,
-                        confidence = (b.frequency * BIGRAM_WEIGHT / 100f).coerceIn(0.0, 1.0),
+                        confidence = (b.frequency.toDouble() * BIGRAM_WEIGHT / 100.0).coerceIn(0.0, 1.0),
                         isEligibleForAutoCommit = false,
                         isEligibleForUserRemoval = true,
                         sourceProvider = this@AdaptiveLearningProvider,
@@ -268,7 +270,7 @@ class AdaptiveLearningProvider(context: Context) : SuggestionProvider {
     }
 
     private fun toCandidate(e: WordFrequencyEntity, isExactMatch: Boolean, weight: Float): SuggestionCandidate {
-        val confidence = (e.frequency * weight / 100f).coerceIn(0.0, 1.0)
+        val confidence = (e.frequency.toDouble() * weight / 100.0).coerceIn(0.0, 1.0)
         return WordSuggestionCandidate(
             text = e.word,
             confidence = confidence,

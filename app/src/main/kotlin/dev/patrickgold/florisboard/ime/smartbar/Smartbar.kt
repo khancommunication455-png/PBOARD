@@ -63,6 +63,7 @@ import dev.patrickgold.florisboard.R
 import dev.patrickgold.florisboard.app.FlorisPreferenceStore
 import dev.patrickgold.florisboard.ime.keyboard.FlorisImeSizing
 import dev.patrickgold.florisboard.ime.nlp.NlpInlineAutofill
+import dev.patrickgold.florisboard.ime.nlp.NlpInlineAutofillSuggestion
 import dev.patrickgold.florisboard.ime.smartbar.quickaction.QuickActionButton
 import dev.patrickgold.florisboard.ime.smartbar.quickaction.QuickActionsRow
 import dev.patrickgold.florisboard.ime.smartbar.quickaction.ToggleOverflowPanelAction
@@ -412,15 +413,13 @@ private fun SmartbarMainRow(modifier: Modifier = Modifier) {
 @Composable
 private fun RowScope.StyleKitAutoSwapRow(
     shouldShowInlineSuggestionsUi: Boolean,
-    inlineSuggestions: List<*>,
+    inlineSuggestions: List<NlpInlineAutofillSuggestion>,
 ) {
-    val nlpManager = LocalContext.current.let { ctx ->
-        val m by ctx.nlpManager(); m
-    }
+    val context = LocalContext.current
+    val nlpManager by context.nlpManager()
+    val prefs by FlorisPreferenceStore
     val candidates by nlpManager.activeCandidatesFlow.collectAsState()
-    val autoSwapEnabled by FlorisPreferenceStore.let { prefs ->
-        prefs.suggestion.autoSwapToolbarAndSuggestions.collectAsState()
-    }
+    val autoSwapEnabled by prefs.suggestion.autoSwapToolbarAndSuggestions.collectAsState()
 
     // Show suggestions row when:
     //  - auto-swap pref is on AND

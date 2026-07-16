@@ -26,6 +26,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -44,6 +45,7 @@ import dev.patrickgold.florisboard.app.Routes
  * top-level entry in the FlorisBoard settings home screen. Each item deep-links
  * to the corresponding settings screen.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StyleKitHubScreen() {
     val nav = LocalNavController.current

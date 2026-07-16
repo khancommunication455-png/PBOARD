@@ -37,7 +37,6 @@ import dev.patrickgold.florisboard.R
 import dev.patrickgold.florisboard.app.LocalNavController
 import dev.patrickgold.florisboard.app.Routes
 import dev.patrickgold.florisboard.app.enumDisplayEntriesOf
-import dev.patrickgold.florisboard.app.settings.typing.StyleKitTypingExtras
 import dev.patrickgold.florisboard.ime.keyboard.IncognitoMode
 import dev.patrickgold.florisboard.ime.nlp.SpellingLanguageMode
 import dev.patrickgold.florisboard.lib.compose.FlorisHyperlinkText
@@ -97,7 +96,21 @@ fun TypingScreen() = FlorisScreen {
         }
 
         // StyleKit: personalized learning + auto-swap toolbar toggles (Part 1).
-        StyleKitTypingExtras()
+        PreferenceGroup(title = "StyleKit — Adaptive Learning") {
+            SwitchPreference(
+                prefs.suggestion.personalizedLearning,
+                title = "Personalized learning",
+                summary = "Learn from your typing on this device to improve suggestions. " +
+                    "Nothing is ever sent off-device. Disable for full privacy or to match " +
+                    "incognito behavior globally.",
+            )
+            SwitchPreference(
+                prefs.suggestion.autoSwapToolbarAndSuggestions,
+                title = "Gboard-style toolbar swap",
+                summary = "When the smartbar layout is set to 'Suggestions + Actions (Auto)', " +
+                    "the toolbar icons crossfade into 3 suggestion chips as soon as you start typing.",
+            )
+        }
 
         PreferenceGroup(title = stringRes(R.string.pref__correction__title)) {
             SwitchPreference(
